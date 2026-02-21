@@ -26,6 +26,7 @@ def check():
     for version, info in versions.items():
         if user_hash == info["hash"]:
             return jsonify({
+                "user_version": version[user_hash],
                 "outdated": user_hash != LATEST_HASH,
                 "latest_version": LATEST_VERSION,
                 "latest_version_name": LATEST_VERSION_NAME
