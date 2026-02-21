@@ -2,15 +2,21 @@ from flask import Flask, request, jsonify, abort
 
 app = Flask(__name__)
 
-hashes = {
+versions = {
     "1.0.0": {"hash": "KJQZGZ64c25uJd4uYEasHQoWZ2meotWL", "version_name": "Release"},
-    "1.1.0": {"hash": "hXNDphSHZErIhKWY17kZgmmtteAXtfwt", "version_name": "Better Output"}
+    "2.0.0": {"hash": "hXNDphSHZErIhKWY17kZgmmtteAXtfwt", "version_name": "Better Output"},
+    "2.1.0": {"hash": "o6zeZYxMkhvvy9i3EEgRP8wOelAP7rkq", "version_name": "Reworked IP lookup"}
 }
 
-LATEST_VERSION = "1.1.0"
-LATEST_HASH = hashes[LATEST_VERSION]["hash"]
 
-@app.route("/check", methods=["POST"])
+
+
+LATEST_VERSION = list(versions)[-1] 
+LATEST_HASH = versions[LATEST_VERSION]["hash"]
+LATEST_VERSION_NAME = versions[LATEST_HASH]["version_name"]
+
+
+@app.route("/c", methods=["POST"])
 def check():
     if not request.is_json:
         abort(403)
@@ -21,11 +27,12 @@ def check():
     if not user_hash:
         abort(403)
 
-    for version, info in hashes.items():
+    for version, info in versions.items():
         if user_hash == info["hash"]:
             return jsonify({
                 "outdated": user_hash != LATEST_HASH,
-                "latest_version": LATEST_VERSION
+                "latest_version": LATEST_VERSION,
+                "latest_version_name": LATEST_VERSION_NAME
             })
             
     return jsonify({
