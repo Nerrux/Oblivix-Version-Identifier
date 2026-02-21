@@ -4,16 +4,12 @@ app = Flask(__name__)
 
 versions = {
     "1.0.0": {"hash": "KJQZGZ64c25uJd4uYEasHQoWZ2meotWL", "version_name": "Release"},
-    "2.0.0": {"hash": "hXNDphSHZErIhKWY17kZgmmtteAXtfwt", "version_name": "Better Output"},
-    "2.1.0": {"hash": "o6zeZYxMkhvvy9i3EEgRP8wOelAP7rkq", "version_name": "Reworked IP lookup"}
 }
 
 
-
-
-LATEST_VERSION = list(versions)[-1] 
+LATEST_VERSION = "1.0.0"
 LATEST_HASH = versions[LATEST_VERSION]["hash"]
-LATEST_VERSION_NAME = versions[LATEST_HASH]["version_name"]
+LATEST_VERSION_NAME = versions[LATEST_VERSION]["version_name"]
 
 
 @app.route("/c", methods=["POST"])
