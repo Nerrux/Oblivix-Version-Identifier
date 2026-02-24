@@ -1,4 +1,5 @@
-from flask import Flask, request, jsonify, abort
+from flask import Flask, request, jsonify, abort, send_file
+from pathlib import Path
 
 app = Flask(__name__)
 
@@ -7,10 +8,13 @@ versions = {
 }
 
 
-LATEST_VERSION = list(versions)[-1]
+LATEST_VERSION = list(versions)[0]
 LATEST_HASH = versions[LATEST_VERSION]["hash"]
 LATEST_VERSION_NAME = versions[LATEST_VERSION]["version_name"]
 
+@app.route("/", methods=["GET", "HEAD", "OPTIONS"])
+def block():
+    abort(403)
 
 @app.route("/c", methods=["POST"])
 def check():
@@ -22,6 +26,7 @@ def check():
 
     if not user_hash:
         abort(403)
+    
 
     for version, info in versions.items():
         if user_hash == info["hash"]:
@@ -37,13 +42,28 @@ def check():
         "error": "Unknown hash"
     }), 400
     
-    
-    
 
+@app.route("/d", methods=["POST"])
+def download():
+    if not request.is_json:
+        abort(403)
+    
+    data = request.json
+    version_name = data.get("requested")
 
-@app.route("/", methods=["GET", "HEAD", "OPTIONS"])
-def block():
-    abort(403)
+ 
+    version_name = version_name.replace('.','-')
+    file_path = Path(__file__).parent / f"{version_name}.tar.gz"
+
+    if not file_path.exists():
+        return jsonify({"message": "File not found"}), 404
+
+    return send_file(
+        str(file_path),
+        mimetype="application/gzip",
+        as_attachment=True,
+        download_name=f"{version_name}.tar.gz"
+    )
 
 
 if __name__ == "__main__":
