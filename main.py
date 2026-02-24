@@ -52,7 +52,6 @@ def download():
     version_name = data.get("requested")
 
  
-    version_name = version_name.replace('.','-')
     file_path = Path(__file__).parent / f"{version_name}.tar.gz"
 
     if not file_path.exists():
